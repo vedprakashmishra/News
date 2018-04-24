@@ -1,23 +1,18 @@
 package com.example.vpmishra.newscientist;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-
+import android.provider.Settings.Secure;
 import com.yuyakaido.android.cardstackview.CardStackView;
 import com.yuyakaido.android.cardstackview.Quadrant;
 
@@ -50,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements Callback {
         news_source.add(index,"google-news");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+         String android_id = Secure.getString(MainActivity.this.getContentResolver(),
+                Secure.ANDROID_ID);
+        Log.e("1",android_id);
         flingContainer = (CardStackView) findViewById(R.id.frame);
         bar= (ProgressBar) findViewById(R.id.progressbar);
         recyclerView=(RecyclerView) findViewById(R.id.recyclerview);
@@ -64,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements Callback {
             @Override
             public void onItemClick(View view, int position) {
                 TextView tv = (TextView) view;
-                tv.setTextColor(getResources().getColor(R.color.colorAccent1));
+                //tv.setTextColor(getResources().getColor(R.color.colorAccent1));
                 index=position;
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -111,7 +109,10 @@ public class MainActivity extends AppCompatActivity implements Callback {
                     JSONArray jsonArray = jsonObject.getJSONArray("articles");
                     JSONObject object = jsonArray.getJSONObject(card_index);
                     Intent intent = new Intent(MainActivity.this, News_card.class);
-                    intent.putExtra("newspaper",news_source.get(index));
+                    intent.putExtra("json",""+s);
+                    intent.putExtra("max",""+jsonArray.length());
+                    intent.putExtra("news",""+jsonObject.getString("source"));
+                    intent.putExtra("position",""+card_index);
                     intent.putExtra("title",object.getString("title"));
                     intent.putExtra("time",object.getString("publishedAt"));
                     intent.putExtra("des",object.getString("description"));
@@ -122,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements Callback {
                 catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
         });
         getData();
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements Callback {
     }
 
     private void getData() {
-        bar.setVisibility(View.INVISIBLE);
+        bar.setVisibility(View.VISIBLE);
         String src=news_source.get(index).toUpperCase();
         getSupportActionBar().setTitle(Html.fromHtml("News : <font color=\"#e1c2ad\">" +src+"</font>"));
         String url = "https://newsapi.org/v1/articles?source="+news_source.get(index)+"&sortBy=top&apiKey=86865741d11a452e8830d6321992c27b";

@@ -42,7 +42,7 @@ public class NewAdapter extends RecyclerView.Adapter<NewAdapter.ViewHolder> {
         String news = mData.get(position);
         holder.myTextView.setText(news);
         if (position==0&&pos==0) {
-            holder.myTextView.setTextColor(holder.myTextView.getResources().getColor(R.color.colorAccent1));
+            //holder.myTextView.setTextColor(holder.myTextView.getResources().getColor(R.color.colorAccent1));
             pos = 1;
         }
     }
